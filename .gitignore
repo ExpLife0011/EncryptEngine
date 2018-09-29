@@ -1,3 +1,24 @@
 
 *.user
 *.ncb
+engine/buildchk_win7_amd64.log
+engine/buildchk_win7_amd64.wrn
+engine/objchk_win7_amd64/amd64/_objects.mac
+engine/objchk_win7_amd64/amd64/cache.obj
+engine/objchk_win7_amd64/amd64/ctx.obj
+engine/objchk_win7_amd64/amd64/engine.pdb
+engine/objchk_win7_amd64/amd64/engine.res
+engine/objchk_win7_amd64/amd64/engine.sys
+engine/objchk_win7_amd64/amd64/main.obj
+engine/objchk_win7_amd64/amd64/message.obj
+engine/objchk_win7_amd64/amd64/process.obj
+engine/objchk_win7_amd64/amd64/security.obj
+engine/objchk_win7_amd64/amd64/vc90.pdb
+*.obj
+*.pdb
+*.log
+*.mac
+*.wrn
+*.exe
+*.res
+*.xml
