@@ -328,13 +328,14 @@ File_UpdateEntireFileByFileObject(
 			else
 				ExAcquireFastMutex(&pVolCtx->FsCtxTableMutex) ;
 
-			//加密文件数据
-
-					//if (FlagEncryptForPPT == 1)
-					//{
-						//data_decrypt(Buffer, uReadBytes);
-					//}
 			
+			/* 应该在这里完成对PPT的明文缓冲区的处理。上面的 File_ReadWriteFile 未读取出整个问题 Important !
+
+					if( (pStreamCtx->bHasPPTWriteData == TRUE) && (pStreamCtx->bIsFileCrypt == TRUE))
+					{
+						data_decrypt(Buffer, uReadBytes);
+					}
+			*/
 			if (data_encrypt(Buffer, uReadBytes))
 			{
 				FlagEncryptForPPT = 0;
