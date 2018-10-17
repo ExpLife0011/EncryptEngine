@@ -239,13 +239,13 @@ File_ReadWriteFile(
 	return IoStatusBlock.Status;
 }
 
-
+void Cc_ClearFileCache(PFILE_OBJECT FileObject, BOOLEAN bIsFlushCache, PLARGE_INTEGER FileOffset, ULONG Length);
 /**
  * encrypt entire file manually, and at the end write file flag
  * into end of file.
  */
 NTSTATUS
-File_UpdateEntireFileByFileObject(
+File_UpdateEntireFileByFileObject(//该函数不存在初次的创建，进入这里已经说明是个已经加密过的PPT文件了
 	__in PFLT_CALLBACK_DATA Data,
 	__in PFLT_RELATED_OBJECTS FltObjects,
 	__in PFILE_OBJECT FileObject, 
@@ -297,7 +297,8 @@ File_UpdateEntireFileByFileObject(
 
 		//calculate padded file size
 		if (FileSize.QuadPart % SECTOR_SIZE)
-		{//file size is not multiply of sector size
+		{//file size is not multiply of sector size 句中的multiply当正倍数的意思来讲~
+			//FileSize.QuadPart中包含了一个扇区中的余数，而(SECTOR_SIZE - FileSize.QuadPart % SECTOR_SIZE)是计算出512减去余数的一个删除的剩余数，当 余数 + 一个删除的剩余数 = 512 
 			FileSize.QuadPart = FileSize.QuadPart + (SECTOR_SIZE - FileSize.QuadPart % SECTOR_SIZE) + FILE_FLAG_LENGTH ;//加上SECTOR_SIZE - FileSize.QuadPart % SECTOR_SIZE后就变成512的整数倍了，因为余数加上了512减去余数的值。
 		}
 		else
@@ -313,9 +314,9 @@ File_UpdateEntireFileByFileObject(
 										FltObjects->Instance, 
 										FileObject, 
 										&ReadWriteOffset,
-										uAllocateBufferSize, 
+										uAllocateBufferSize, //每次最多读出 PPT 文件的这么多数据 ：1024*64
 										Buffer, 
-										&uReadBytes,
+										&uReadBytes,//实际读出的大小
 										FLTFL_IO_OPERATION_NON_CACHED|FLTFL_IO_OPERATION_DO_NOT_UPDATE_BYTE_OFFSET) ;
 			if (!NT_SUCCESS(status))
 				break;
@@ -329,15 +330,16 @@ File_UpdateEntireFileByFileObject(
 				ExAcquireFastMutex(&pVolCtx->FsCtxTableMutex) ;
 
 			
-			/* 应该在这里完成对PPT的明文缓冲区的处理。上面的 File_ReadWriteFile 未读取出整个问题 Important !
+			//Start  可能需要循环解密的处理 & 应该在这里完成对PPT的明文缓冲区的处理。上面的 File_ReadWriteFile 未读取出整个问题 Important !
 
-					if( (pStreamCtx->bHasPPTWriteData == TRUE) && (pStreamCtx->bIsFileCrypt == TRUE))
-					{
-						data_decrypt(Buffer, uReadBytes);
-					}
-			*/
+					
+						//data_decrypt(Buffer, uReadBytes);
+					
+			//End
 			if (data_encrypt(Buffer, uReadBytes))
 			{
+				//data_encrypt(Buffer, uReadBytes);
+
 				FlagEncryptForPPT = 0;
 				//加密失败
 				DbgPrint("---------------------data_encrypt Failed For ppt----------------\n");
@@ -370,6 +372,8 @@ File_UpdateEntireFileByFileObject(
 			if (EndOfFile)
 				break;
 
+			
+
 			//修改偏移量 为了循环中的再次读取并再次加密
 			uOffset += uAllocateBufferSize ;
 			ReadWriteOffset.QuadPart += uAllocateBufferSize ;
@@ -389,6 +393,8 @@ File_UpdateEntireFileByFileObject(
 						   &uWriteBytes,
 						   FLTFL_IO_OPERATION_NON_CACHED|FLTFL_IO_OPERATION_DO_NOT_UPDATE_BYTE_OFFSET) ;
 		DbgPrint("--------------------- write file flag For ppt and Finished !!!!! ---------------------\n");
+
+		//Cc_ClearFileCache(FileObject, TRUE, NULL, 0) ; 
 		
 	}
 	finally{
