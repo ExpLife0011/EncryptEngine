@@ -255,6 +255,7 @@ File_UpdateEntireFileByFileObject(//该函数不存在初次的创建，进入这里已经说明是个
 {
 	NTSTATUS status = STATUS_SUCCESS ;
 	PUCHAR Buffer = NULL ;
+	PUCHAR Buffer2 = NULL ;
 	LARGE_INTEGER ReadWriteOffset = {0} ;
 	BOOLEAN EndOfFile = FALSE;
 	ULONG uReadBytes = 0 ;
@@ -306,11 +307,12 @@ File_UpdateEntireFileByFileObject(//该函数不存在初次的创建，进入这里已经说明是个
 			FileSize.QuadPart += FILE_FLAG_LENGTH ;
 		}
 		//RtlCopyMemory(psFileFlag->FileKeyHash, pStreamCtx->szKeyHash, HASH_SIZE) ;
-		
-
+	
+		Buffer2 = FltAllocatePoolAlignedWithTag(FltObjects->Instance,PagedPool, FileSize.QuadPart, FILEFLAG_POOL_TAG);
+		RtlZeroMemory(Buffer2,FileSize.QuadPart);
 		while (TRUE)
 		{
-			status = File_ReadWriteFile(IRP_MJ_READ, 
+			status = File_ReadWriteFile(IRP_MJ_READ, //没有找到要写入新数据的地方 ?
 										FltObjects->Instance, 
 										FileObject, 
 										&ReadWriteOffset,
@@ -372,7 +374,7 @@ File_UpdateEntireFileByFileObject(//该函数不存在初次的创建，进入这里已经说明是个
 			if (EndOfFile)
 				break;
 
-			
+			//Cc_ClearFileCache(FileObject, TRUE, &ReadWriteOffset, uWriteBytes) ; 
 
 			//修改偏移量 为了循环中的再次读取并再次加密
 			uOffset += uAllocateBufferSize ;

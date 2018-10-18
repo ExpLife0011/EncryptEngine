@@ -1045,6 +1045,8 @@ PreClose (
 				{//only ppt related, encrypted entire file and add file flag in the end of file
 					DbgPrint("---------------------¡¾ File_UpdateEntireFileByFileObject For PPT ¡¿---------------------\n");
 					File_UpdateEntireFileByFileObject(Data, FltObjects, FileObject, pStreamCtx, pVolCtx) ;
+					//File_UpdateEntireFileByFileObject(Data, FltObjects, FileObject, pStreamCtx, pVolCtx) ;
+
 				}
 
 				// set flag in stream context
