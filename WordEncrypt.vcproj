@@ -9,7 +9,7 @@
 	>
 	<Platforms>
 		<Platform
-			Name="Win32"
+			Name="Win32" 
 		/>
 	</Platforms>
 	<ToolFiles>
