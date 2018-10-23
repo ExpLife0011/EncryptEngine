@@ -1683,8 +1683,7 @@ Return Value:
 		// going on encrypting. Otherwise, set "has been write" flag for the file and encrypted in 
 		// pre-close routine
 		// If user modify ppt document and click "close" button in powerpnt, tmp file is generated.
-		// If user click "save" button in powerpnt, no tmp file generated and partial data of the file
-		// is flush back to disk.
+		// If user click "save" button in powerpnt, no tmp file generated and partial data of the file is flush back to disk.如果用户点保存不会生成临时文件且数据写回磁盘。
 		// This judgement can distinguish such two situations.
 		if (bIsPPTFile && !pStreamCtx->bIsFileCrypt && (bIsSystemProcess == POWERPNT_PROCESS))
 		{
