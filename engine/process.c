@@ -192,7 +192,7 @@ BOOLEAN Ps_IsCurrentProcessMonitored(WCHAR* pwszFilePathName, ULONG uLength, BOO
 			}
 */			
 		}
-	/*
+	
 		// verify tmp file
 		if(!_strnicmp(szProcessName, "powerpnt.exe", strlen("powerpnt.exe")))
 		if ((bIsPPTFile != NULL) && !_wcsnicmp(pwszExt, L".ppt", wcslen(L".ppt")))
@@ -206,7 +206,7 @@ BOOLEAN Ps_IsCurrentProcessMonitored(WCHAR* pwszFilePathName, ULONG uLength, BOO
 		{
 			*bIsPPTFile = TRUE ;//为实参赋值，因为实参是一个空布尔型变量的地址
 		}
-		*/
+		
 
 		// verify tmp file
 		if(!_strnicmp(szProcessName, "powerpnt.exe", strlen("powerpnt.exe")))
